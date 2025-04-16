@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
-from notifications import TelegramNotification
+from notifications import TelegramNotification, EmailNotification
 from schema import ListingItem
 
 load_dotenv()
@@ -14,8 +14,13 @@ telegram_notification = TelegramNotification(
     bot_token=bot_token,
     chat_id=chat_id
 )
-
-
+email_notification = EmailNotification(
+    smtp_server="smtp.gmail.com",
+    smtp_port=587,
+    sender_email=os.environ.get("SENDER_EMAIL"),
+    sender_password=os.environ.get("SENDER_PASSWORD"),
+    recipient_email=os.environ.get("RECIPIENT_EMAIL")
+)
 async def main():
     item = {
         "id": "1014572788",
@@ -29,6 +34,9 @@ async def main():
         "photo_url": "https://rms.kufar.by/v1/list_thumbs_2x/adim1/9b9bb479-c6d4-4266-a3ad-d176a58ae946.jpg"
     }
     item = ListingItem.from_dict(item)
-    await telegram_notification.send_notification(item)
+    # await telegram_notification.send_notification(item)
+    await email_notification.send_notification(item)
+
+
 if __name__ == "__main__":
     asyncio.run(main())
