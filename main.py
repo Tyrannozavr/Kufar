@@ -6,16 +6,9 @@ import httpx
 from pathlib import Path
 from downloader import download_all_pages
 from extractor import extract_all_listings_data
+from logger_config import logger
 
-async def process_pages(saved_files):
-    all_listings = []
-    for file in saved_files:
-        with open(file, 'r', encoding='utf-8') as f:
-            html_content = f.read()
-            listings_data = extract_all_listings_data(html_content)
-            all_listings.extend(listings_data)
-    return all_listings
-
+from services import update_offers
 
 
 async def start_parsing(storage_file: str = "listings_data.json") -> List[Dict[str, str]]:
@@ -43,17 +36,17 @@ async def start_parsing(storage_file: str = "listings_data.json") -> List[Dict[s
 
     return all_listings_data
 
+
 async def main():
+    # Initial parsing
     await start_parsing()
+
+    # Update offers
+    async with httpx.AsyncClient(timeout=30.0, verify=True, http2=True) as session:
+        print(f"Updating offers... session type is {type(session)}")
+        new_offers = await update_offers(session)
+
+    print(f"Found {len(new_offers)} new offers.")
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-# площадь
-# адрес
-# фото
-# цена
-# id
-# https://re.kufar.by/vi/gomel/snyat/kommercheskaya/magaziny/1003991422?rank=58&searchId=3a5060eed5996b107f2070f7f12830472565
-# https://re.kufar.by/vi/minsk/snyat/kommercheskaya/magaziny/246430817?rank=57&searchId=3a5060eed5996b107f2070f7f12830472565
-# https://re.kufar.by/vi/postavy/snyat/kommercheskaya/magaziny/239021229?rank=55&searchId=3a5060eed5996b107f2070f7f12830472565
