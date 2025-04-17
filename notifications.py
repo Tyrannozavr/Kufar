@@ -74,26 +74,13 @@ class EmailNotification:
         self._recipient_email = recipient_email
 
     def _render_message(self, item: ListingItem) -> str:
+        if item.parameters.count(", этаж"):
+            item.parameters = item.parameters.split(", этаж")[0]
         message = f"""
-        <h2>Новое объявление</h2>
-        <p><strong>Параметры:</strong> {item.parameters}</p>
         <p><strong>Адрес:</strong> {item.address}</p>
         <p>ЕТ/Д</p>
-        <h3>Цена:</h3>
+        <p><strong></strong> {item.parameters}</p>
         """
-
-        if item.prices.byn:
-            message += f"<p>BYN: {item.prices.byn}</p>"
-        if item.prices.usd:
-            message += f"<p>USD: {item.prices.usd}</p>"
-        if item.prices.per_meter:
-            message += f"<p>За м²: {item.prices.per_meter}</p>"
-
-        message += f"<p><a href='https://re.kufar.by/vi/brest/snyat/kommercheskaya/magaziny/{item.id}?searchId=5591851b475bb654ab25f35c6b40a1a72922'>Подробнее</a></p>"
-
-        if item.photo_url:
-            message += f"<img src='{item.photo_url}' alt='Фото объявления'>"
-
         return message
 
     async def send_notification(self, item: ListingItem):
