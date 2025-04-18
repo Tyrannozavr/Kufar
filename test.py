@@ -19,7 +19,7 @@ email_notification = EmailNotification(
     smtp_port=587,
     sender_email=os.environ.get("SENDER_EMAIL"),
     sender_password=os.environ.get("SENDER_PASSWORD"),
-    recipient_email="dmitriy40647274@gmail.com",
+    recipient_email="",
 )
 async def main():
     item = {
