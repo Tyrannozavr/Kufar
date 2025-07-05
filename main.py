@@ -45,9 +45,10 @@ async def start_parsing(storage_file: str = "listings_data.json") -> List[Dict[s
             all_listings_data.extend(listings_data)
 
     # Save extracted data to storage file
-    with open(storage_path, 'w', encoding='utf-8') as f:
+    with open(storage_path, 'w', encoding='utf-8') as f:\
         json.dump(all_listings_data, f, ensure_ascii=False, indent=2)
 
+    logger.info(f"updated {storage_path} with {len(all_listings_data)}")
     return all_listings_data
 
 
