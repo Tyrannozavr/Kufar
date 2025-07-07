@@ -61,7 +61,7 @@ async def main():
         bot_token=os.getenv("BOT_TOKEN"),
         chat_id=os.getenv("CHAT_ID")
     )
-    email_notification = EmailNotification(
+    # email_notification = EmailNotification(
         smtp_server="smtp.gmail.com",
         smtp_port=587,
         sender_email=os.environ.get("SENDER_EMAIL"),
