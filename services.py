@@ -17,8 +17,16 @@ def transform_item(item: Dict) -> str:
     return transform_address_parameters(address=item.get("address"), parameters=item.get("parameters"))
 
 
-async def update_offers(session: httpx.AsyncClient, storage_file: str = "listings_data.json") -> List[Dict[str, str]]:
+async def update_offers(session: httpx.AsyncClient, storage_file: str = None) -> List[Dict[str, str]]:
+    # Get storage file path from environment or use default
+    if storage_file is None:
+        import os
+        storage_file = os.getenv("STORAGE_FILE", "listings_data.json")
+    
     storage_path = Path(storage_file)
+    
+    # Ensure directory exists
+    storage_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Load existing data
     if storage_path.exists():

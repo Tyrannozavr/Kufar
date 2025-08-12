@@ -1,72 +1,91 @@
 # Kufar Scraper
 
-This project is a scraper for Kufar, designed to notify users about new listings via Telegram and email.
+Этот проект представляет собой скрапер для Kufar, предназначенный для уведомления пользователей о новых объявлениях через Telegram и email.
 
-## Prerequisites
+## Предварительные требования
 
 - Docker
+- Docker Compose
 
-## Setup and Running
+## Настройка и запуск
 
-1. **Install Docker**
+1. **Установите Docker и Docker Compose**
    
-   If you haven't installed Docker yet, follow these steps:
+   Если вы еще не установили Docker, следуйте этим шагам:
 
-   - For Ubuntu:
-     ```
+   - Для Ubuntu:
+     ```bash
      sudo apt-get update
-     sudo apt-get install docker-ce docker-ce-cli containerd.io
+     sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
      ```
 
-   - For macOS:
-     Download and install Docker Desktop from [Docker's official website](https://www.docker.com/products/docker-desktop)
+   - Для macOS:
+     Скачайте и установите Docker Desktop с [официального сайта Docker](https://www.docker.com/products/docker-desktop)
 
-   - For Windows:
-     Download and install Docker Desktop from [Docker's official website](https://www.docker.com/products/docker-desktop)
+   - Для Windows:
+     Скачайте и установите Docker Desktop с [официального сайта Docker](https://www.docker.com/products/docker-desktop)
 
-2. **Create .env file**
+2. **Создайте файл .env**
 
-   Create a file named `.env` in the project root directory with the following content:
+   Создайте файл с именем `.env` в корневой директории проекта со следующим содержимым:
 
-Replace the placeholder values with your actual credentials.
+```env
+# Telegram настройки
+BOT_TOKEN=your_telegram_bot_token
+CHAT_ID=your_telegram_chat_id
+ENABLE_TELEGRAM=true
 
-3. **Build the Docker image**
+# Email настройки
+SENDER_EMAIL=your_email@gmail.com
+SENDER_PASSWORD=your_app_password
+RECIPIENT_EMAIL=recipient@example.com
+ENABLE_EMAIL=false
 
-Navigate to the project directory in your terminal and run:
-
-```bash
-docker build -t kufar:latest .
+# Путь к файлу хранения данных (не изменяйте)
+STORAGE_FILE=/app/data/listings_data.json
 ```
 
-4. **Run the Docker container**
+Замените placeholder значения на ваши реальные учетные данные.
 
-After the image is built, run the container with:
+3. **Запустите проект с помощью Docker Compose**
 
-```bash
-docker run -it --env-file .env kufar:latest
-```
-
-5. **Run the Docker container with auto-restart**
-
-To run the container with auto-restart (it will restart unless explicitly stopped), use:
-This will run the container in detached mode (-d) and restart it automatically unless you explicitly stop it.
+Перейдите в директорию проекта в терминале и выполните:
 
 ```bash
-docker run -d --restart unless-stopped --env-file .env kufar:latest
+# Запуск в фоновом режиме
+docker-compose up -d
+
+# Просмотр логов
+docker-compose logs -f
+
+# Остановка
+docker-compose down
 ```
 
-## Notes
+## Настройки уведомлений
 
-- Ensure that your Gmail account has "Less secure app access" enabled or use an App Password if you have 2-factor authentication enabled.
-- Keep your `.env` file secure and do not share it publicly.
-- The scraper will run continuously. To stop it, use `docker stop <container_id>`.
+Проект поддерживает гибкую настройку уведомлений через переменные окружения:
 
-## Troubleshooting
+- `ENABLE_TELEGRAM=true/false` - включить/отключить Telegram уведомления
+- `ENABLE_EMAIL=true/false` - включить/отключить Email уведомления
 
-If you encounter any issues, please check the following:
+## Сохранение данных
 
-- Ensure all environment variables in the `.env` file are correctly set.
-- Check that your Docker installation is up to date.
-- Verify that your internet connection is stable.
+Все данные сохраняются в папке `./data/` на хосте и доступны между перезапусками контейнера. При первом запуске скрипт скачает все доступные страницы и создаст базу данных объявлений. При последующих запусках скрипт будет только добавлять новые объявления в существующую базу.
 
-For any other problems, please open an issue in the project repository.
+## Важные замечания
+
+- Убедитесь, что ваш Gmail аккаунт имеет включенный доступ для менее безопасных приложений или используйте пароль приложения, если у вас включена двухфакторная аутентификация.
+- Храните файл `.env` в безопасности и не делитесь им публично.
+- Скрапер будет работать непрерывно. Для остановки используйте `docker-compose down`.
+
+## Устранение неполадок
+
+Если вы столкнулись с проблемами, проверьте следующее:
+
+- Убедитесь, что все переменные окружения в файле `.env` правильно установлены.
+- Проверьте, что ваша установка Docker обновлена.
+- Убедитесь, что ваше интернет-соединение стабильно.
+- Проверьте логи контейнера: `docker-compose logs -f`
+
+Для любых других проблем, пожалуйста, создайте issue в репозитории проекта.
