@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  kufar-scraper:
+    build: .
+    container_name: kufar-scraper
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    environment:
+      - STORAGE_FILE=/app/data/listings_data.json
+    networks:
+      - kufar-network
+
+networks:
+  kufar-network:
+    driver: bridge 
