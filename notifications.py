@@ -29,13 +29,13 @@ class TelegramNotification:
         if area is not None:
             # Проверяем, есть ли площадь в параметрах (разные форматы)
             area_in_params = False
-            # Проверяем целое число
+            # Проверяем целое число с м²
             if f"{int(area)} м²" in parameters_text:
                 area_in_params = True
             # Проверяем с точкой
             elif f"{area} м²" in parameters_text:
                 area_in_params = True
-            # Проверяем кв.м.
+            # Проверяем кв.м. или кв м
             elif f"{int(area)} кв" in parameters_text.lower() or f"{area} кв" in parameters_text.lower():
                 area_in_params = True
             
