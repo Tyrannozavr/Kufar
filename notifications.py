@@ -1,6 +1,7 @@
 from aiogram import Bot
 from aiogram.enums import ParseMode
 from schema import ListingItem
+from extractor import extract_area_from_parameters
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -13,10 +14,38 @@ class TelegramNotification:
     def _render_message(self, item: ListingItem) -> str:
         message = (
             f"🏠 <b>Новое объявление</b>\n\n"
-            f"📏 {item.parameters}\n"
-            f"📍 {item.address}\n\n"
-            f"💰 Цена:\n"
         )
+        
+        # Извлекаем площадь из параметров, если она не указана напрямую
+        area = item.area
+        if area is None and item.parameters:
+            area = extract_area_from_parameters(item.parameters)
+        
+        # Формируем строку параметров
+        parameters_text = item.parameters
+        
+        # Если площадь уже есть в параметрах, не добавляем отдельную строку
+        # Площадь будет видна в параметрах
+        if area is not None:
+            # Проверяем, есть ли площадь в параметрах (разные форматы)
+            area_in_params = False
+            # Проверяем целое число
+            if f"{int(area)} м²" in parameters_text:
+                area_in_params = True
+            # Проверяем с точкой
+            elif f"{area} м²" in parameters_text:
+                area_in_params = True
+            # Проверяем кв.м.
+            elif f"{int(area)} кв" in parameters_text.lower() or f"{area} кв" in parameters_text.lower():
+                area_in_params = True
+            
+            # Если площади нет в параметрах, добавляем отдельной строкой
+            if not area_in_params:
+                message += f"📐 Площадь: {area} м²\n"
+        
+        message += f"📏 {parameters_text}\n"
+        message += f"📍 {item.address}\n\n"
+        message += f"💰 Цена:\n"
 
         if item.prices.byn:
             message += f"   BYN: {item.prices.byn}\n"
