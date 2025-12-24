@@ -132,8 +132,9 @@ async def main():
                     if telegram_notification:
                         notification_tasks.append(telegram_notification.send_notification(offer))
                     
-                    if email_notification:
-                        notification_tasks.append(email_notification.send_notification(offer))
+                    # Временно закомментировано для тестирования
+                    # if email_notification:
+                    #     notification_tasks.append(email_notification.send_notification(offer))
                     
                     if notification_tasks:
                         await asyncio.gather(*notification_tasks)
@@ -160,8 +161,9 @@ async def main():
                     error_tasks = []
                     if telegram_notification:
                         error_tasks.append(telegram_notification.send_error(error_message))
-                    if email_notification:
-                        error_tasks.append(email_notification.send_error(error_message))
+                    # Временно закомментировано для тестирования
+                    # if email_notification:
+                    #     error_tasks.append(email_notification.send_error(error_message))
                     
                     if error_tasks:
                         await asyncio.gather(*error_tasks)
