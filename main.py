@@ -132,8 +132,9 @@ async def main():
                     if telegram_notification:
                         notification_tasks.append(telegram_notification.send_notification(offer))
                     
-                    if email_notification:
-                        notification_tasks.append(email_notification.send_notification(offer))
+                    # Временно закомментировано для тестирования
+                    # if email_notification:
+                    #     notification_tasks.append(email_notification.send_notification(offer))
                     
                     if notification_tasks:
                         await asyncio.gather(*notification_tasks)
