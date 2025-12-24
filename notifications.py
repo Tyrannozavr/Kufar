@@ -21,12 +21,27 @@ class TelegramNotification:
         if area is None and item.parameters:
             area = extract_area_from_parameters(item.parameters)
         
-        # Всегда показываем площадь отдельной строкой, если она есть
-        # Это обеспечивает единый формат для всех уведомлений
-        if area is not None:
+        # Проверяем, есть ли площадь в параметрах
+        parameters_text = item.parameters
+        area_in_params = False
+        
+        if area is not None and parameters_text:
+            # Проверяем разные форматы площади в параметрах
+            area_str_int = f"{int(area)} м²"
+            area_str_float = f"{area} м²"
+            area_str_int_dot = f"{int(area)}.0 м²"
+            
+            if area_str_int in parameters_text or area_str_float in parameters_text or area_str_int_dot in parameters_text:
+                area_in_params = True
+            # Проверяем кв.м. или кв м
+            elif f"{int(area)} кв" in parameters_text.lower() or f"{area} кв" in parameters_text.lower():
+                area_in_params = True
+        
+        # Показываем площадь отдельной строкой ТОЛЬКО если её нет в параметрах
+        if area is not None and not area_in_params:
             message += f"📐 Площадь: {area} м²\n"
         
-        message += f"📏 {item.parameters}\n"
+        message += f"📏 {parameters_text}\n"
         message += f"📍 {item.address}\n\n"
         message += f"💰 Цена:\n"
 
